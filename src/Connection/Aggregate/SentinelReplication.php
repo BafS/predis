@@ -650,6 +650,10 @@ class SentinelReplication implements ReplicationInterface
         foreach ($this->slaves as $connection) {
             $connection->disconnect();
         }
+
+        if ($this->sentinelConnection) {
+            $this->sentinelConnection->disconnect();
+        }
     }
 
     /**
