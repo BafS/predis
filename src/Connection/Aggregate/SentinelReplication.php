@@ -84,7 +84,7 @@ class SentinelReplication implements ReplicationInterface
      *
      * @var int
      */
-    protected $retryLimit = 20;
+    protected $retryLimit = 5;
 
     /**
      * Time to wait in milliseconds before fetching a new configuration from one
@@ -629,13 +629,30 @@ class SentinelReplication implements ReplicationInterface
      */
     public function connect()
     {
-        if (!$this->current) {
-            if (!$this->current = $this->pickSlave()) {
-                $this->current = $this->getMaster();
+        $retries = 0;
+
+        CONNECT_RETRY: {
+            try {
+                if (!$this->current) {
+                    if (!$this->current = $this->pickSlave()) {
+                        $this->current = $this->getMaster();
+                    }
+                }
+
+                $this->current->connect();
+            } catch (CommunicationException $exception) {
+                $this->remove($this->current);
+
+                if ($retries == $this->retryLimit) {
+                    throw $exception;
+                }
+
+                usleep($this->retryWait * 1000);
+
+                ++$retries;
+                goto CONNECT_RETRY;
             }
         }
-
-        $this->current->connect();
     }
 
     /**
@@ -687,10 +704,7 @@ class SentinelReplication implements ReplicationInterface
                     throw $exception;
                 }
 
-                // Only wait if no servers available
-                if (empty($this->master) && empty($this->slaves)) {
-                    usleep($this->retryWait * 1000);
-                }
+                usleep($this->retryWait * 1000);
 
                 ++$retries;
                 goto SENTINEL_RETRY;
