@@ -83,7 +83,7 @@ class SentinelReplication implements ReplicationInterface
      *
      * @var int
      */
-    protected $retryLimit = 5;
+    protected $retryLimit = 3;
 
     /**
      * Time to wait in milliseconds before fetching a new configuration from one
@@ -91,7 +91,7 @@ class SentinelReplication implements ReplicationInterface
      *
      * @var int
      */
-    protected $retryWait = 1000;
+    protected $retryWait = 500;
 
     /**
      * Flag for automatic fetching of available sentinels.
@@ -637,7 +637,8 @@ class SentinelReplication implements ReplicationInterface
                     throw $exception;
                 }
 
-                usleep($this->retryWait * 1000);
+                // First retry immediate, then exponential back-off
+                usleep(min($this->retryWait * $retries, 1000) * 1000);
 
                 ++$retries;
                 goto CONNECT_RETRY;
@@ -694,7 +695,8 @@ class SentinelReplication implements ReplicationInterface
                     throw $exception;
                 }
 
-                usleep($this->retryWait * 1000);
+                // First retry immediate, then exponential back-off
+                usleep(min($this->retryWait * $retries, 1000) * 1000);
 
                 ++$retries;
                 goto SENTINEL_RETRY;
