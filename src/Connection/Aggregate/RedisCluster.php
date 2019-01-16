@@ -299,6 +299,16 @@ class RedisCluster implements ClusterInterface, \IteratorAggregate, \Countable
     }
 
     /**
+     * Pre-loads a full slots map to avoid runtime guessing.
+     *
+     * @param array $slotsMap a slots map for the cluster.
+     */
+    public function setSlotsMap(array $slotsMap)
+    {
+        $this->slotsMap = $slotsMap;
+    }
+
+    /**
      * Pre-associates a connection to a slots range to avoid runtime guessing.
      *
      * @param int                            $first      Initial slot of the range.
