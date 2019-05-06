@@ -6,7 +6,7 @@
 [![Monthly installs][ico-downloads-monthly]][link-downloads]
 [![Build status][ico-travis]][link-travis]
 
-Flexible and feature-complete [Redis](http://redis.io) client for PHP >= 5.3 and HHVM >= 2.3.0.
+Flexible and feature-complete [Redis](http://redis.io) client for PHP >= 5.4.
 
 Predis does not require any additional C extension by default, but it can be optionally paired with
 [phpiredis](https://github.com/nrk/phpiredis) to lower the overhead of the serialization and parsing
