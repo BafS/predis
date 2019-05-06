@@ -35,10 +35,10 @@ More details about this project can be found on the [frequently asked questions]
 
 ## How to _install_ and use Predis ##
 
-This library can be found on [Packagist](http://packagist.org/packages/predis/predis) for an easier
+This library can be found on [Packagist][link-travis] for an easier
 management of projects dependencies using [Composer](http://packagist.org/about-composer) or on our
 [own PEAR channel](http://pear.nrk.io) for a more traditional installation using PEAR. Ultimately,
-compressed archives of each release are [available on GitHub](https://github.com/predis/predis/releases).
+compressed archives of each release are [available on GitHub](https://github.com/ProtonMail/predis/releases).
 
 
 ### Loading the library ###
