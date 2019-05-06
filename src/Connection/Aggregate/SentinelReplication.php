@@ -83,7 +83,7 @@ class SentinelReplication implements ReplicationInterface
      *
      * @var int
      */
-    protected $retryLimit = 20;
+    protected $retryLimit = 3;
 
     /**
      * Time to wait in milliseconds before fetching a new configuration from one
@@ -91,7 +91,7 @@ class SentinelReplication implements ReplicationInterface
      *
      * @var int
      */
-    protected $retryWait = 1000;
+    protected $retryWait = 500;
 
     /**
      * Flag for automatic fetching of available sentinels.
@@ -619,13 +619,31 @@ class SentinelReplication implements ReplicationInterface
      */
     public function connect()
     {
-        if (!$this->current) {
-            if (!$this->current = $this->pickSlave()) {
-                $this->current = $this->getMaster();
+        $retries = 0;
+
+        CONNECT_RETRY: {
+            try {
+                if (!$this->current) {
+                    if (!$this->current = $this->pickSlave()) {
+                        $this->current = $this->getMaster();
+                    }
+                }
+
+                $this->current->connect();
+            } catch (CommunicationException $exception) {
+                $this->remove($this->current);
+
+                if ($retries == $this->retryLimit) {
+                    throw $exception;
+                }
+
+                // First retry immediate, then exponential back-off
+                usleep(min($this->retryWait * $retries, 1000) * 1000);
+
+                ++$retries;
+                goto CONNECT_RETRY;
             }
         }
-
-        $this->current->connect();
     }
 
     /**
@@ -661,16 +679,24 @@ class SentinelReplication implements ReplicationInterface
 
         SENTINEL_RETRY: {
             try {
-                $response = $this->getConnection($command)->$method($command);
+                $connection = $this->getConnection($command);
+                $response = $connection->$method($command);
+
+                if ($response instanceof ErrorResponseInterface
+                    && in_array($response->getErrorType(), ['LOADING', 'MASTERDOWN'])) {
+                    throw new ConnectionException($connection, $response->getMessage() . " [$connection]");
+                }
             } catch (CommunicationException $exception) {
-                $this->wipeServerList();
-                $exception->getConnection()->disconnect();
+                $connection = $exception->getConnection();
+                $connection->disconnect();
+                $this->remove($connection);
 
                 if ($retries == $this->retryLimit) {
                     throw $exception;
                 }
 
-                usleep($this->retryWait * 1000);
+                // First retry immediate, then exponential back-off
+                usleep(min($this->retryWait * $retries, 1000) * 1000);
 
                 ++$retries;
                 goto SENTINEL_RETRY;
