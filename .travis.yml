@@ -39,3 +39,4 @@ matrix:
     - php: nightly
   allow_failures:
     - php: nightly
+

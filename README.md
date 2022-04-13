@@ -467,7 +467,6 @@ found [on its project page](http://travis-ci.org/predis/predis).
 - [Issue tracker](https://github.com/predis/predis/issues)
 - [PEAR channel](http://pear.nrk.io)
 
-
 ### Author ###
 
 - [Daniele Alessandri](mailto:suppakilla@gmail.com) ([twitter](http://twitter.com/JoL1hAHN))
