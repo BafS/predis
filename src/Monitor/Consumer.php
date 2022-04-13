@@ -24,7 +24,7 @@ class Consumer implements \Iterator
 {
     private $client;
     private $valid;
-    private $position;
+    private $position = 0;
 
     /**
      * @param ClientInterface $client Client instance used by the consumer.
@@ -90,7 +90,9 @@ class Consumer implements \Iterator
 
     /**
      * {@inheritdoc}
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         // NOOP
@@ -101,6 +103,7 @@ class Consumer implements \Iterator
      *
      * @return object
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->getValue();
@@ -108,7 +111,9 @@ class Consumer implements \Iterator
 
     /**
      * {@inheritdoc}
+     * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -116,7 +121,9 @@ class Consumer implements \Iterator
 
     /**
      * {@inheritdoc}
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         ++$this->position;
@@ -127,6 +134,7 @@ class Consumer implements \Iterator
      *
      * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->valid;

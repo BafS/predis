@@ -71,12 +71,24 @@ class ConnectionSelectTest extends PredisCommandTestCase
     /**
      * @group connected
      * @expectedException \Predis\Response\ServerException
-     * @expectedExceptionMessage ERR DB index is out of range
+     * @expectedExceptionMessageRegExp /ERR.*DB index/
      */
-    public function testThrowsExceptionOnUnexpectedDatabase()
+    public function testThrowsExceptionOnUnexpectedDatabaseRange()
     {
         $redis = $this->getClient();
 
         $redis->select(100000000);
+    }
+
+    /**
+     * @group connected
+     * @expectedException \Predis\Response\ServerException
+     * @expectedExceptionMessageRegExp /ERR (invalid DB index|value is not)/
+     */
+    public function testThrowsExceptionOnUnexpectedDatabaseName()
+    {
+        $redis = $this->getClient();
+
+        $redis->select('x');
     }
 }

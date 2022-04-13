@@ -127,7 +127,9 @@ class ListKey implements \Iterator
 
     /**
      * {@inheritdoc}
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function rewind()
     {
         $this->reset();
@@ -136,7 +138,9 @@ class ListKey implements \Iterator
 
     /**
      * {@inheritdoc}
+     * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return $this->current;
@@ -144,7 +148,9 @@ class ListKey implements \Iterator
 
     /**
      * {@inheritdoc}
+     * @return int
      */
+    #[\ReturnTypeWillChange]
     public function key()
     {
         return $this->position;
@@ -152,7 +158,9 @@ class ListKey implements \Iterator
 
     /**
      * {@inheritdoc}
+     * @return void
      */
+    #[\ReturnTypeWillChange]
     public function next()
     {
         if (!$this->elements && $this->fetchmore) {
@@ -168,7 +176,9 @@ class ListKey implements \Iterator
 
     /**
      * {@inheritdoc}
+     * @return bool
      */
+    #[\ReturnTypeWillChange]
     public function valid()
     {
         return $this->valid;
